@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define MAX_LENGTH 10000
+#define MAX_LENGTH 30000
 /*
     C 표준 라이브러리의 rand() 를 활용하여, 랜덤한 숫자를 출력합니다.
  */
@@ -10,7 +10,7 @@ int main()
 {
     srand(time(NULL));
     for(int i=0;i<MAX_LENGTH;i++)
-    {
+    {   
         int random_num = rand() % 1000;
         char out;
         while (random_num > 0)
@@ -23,5 +23,7 @@ int main()
         }
         putchar('\n');
     }
+
+    printf("%d items.. \n", i+1);
     return 0;
 }
