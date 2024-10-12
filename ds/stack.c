@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "stack.h"
+#include "Stack.h"
 
 
 void initStack(Stack* s)
