@@ -51,7 +51,6 @@ int InitializeIocp( HANDLE* iocpHandle, LPFN_ACCEPTEX acceptEx, LPFN_CONNECTEX c
   *iocpHandle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
 
   closesocket(initSocket);
-  WSACleanup();
   return 0;
 }
 
