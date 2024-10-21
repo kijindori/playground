@@ -4,8 +4,6 @@
   간단한 IOCP 서버 
 *******************/
 
-
-
 int InitializeServerService( ServerService* service )
 {
   assert( InitializeWinsock(&service->wsaData) == 0 ) ;
@@ -96,37 +94,31 @@ int AcceptConnection(ServerService* service)
 
 int main()
 {
-  ServerService service;
-  InitializeServerService(&service);
-  AcceptConnection(&service);
+ 
+  WSADATA w;
+  assert( WSAStartup(MAKEWORD(2, 2), &w) == 0);
+  SOCKET initSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+  LPFN_ACCEPTEX lpfnAcceptEx = NULL;
+  LPFN_CONNECTEX lpfnConnectEx = NULL;
+  LPFN_DISCONNECTEX lpfnDisConnectEx = NULL;
+
+  GUID GuidAcceptEx = WSAID_ACCEPTEX;
+  GUID GuidConnectEx = WSAID_CONNECTEX;
+  GUID GuidDisconnectEx = WSAID_DISCONNECTEX;
+
+  WSAIoctl(initSocket, SIO_GET_EXTENSION_FUNCTION_POINTER, &GuidAcceptEx, sizeof(GuidAcceptEx), lpfnAcceptEx, sizeof(lpfnAcceptEx), NULL, NULL, NULL);
+  WSAIoctl(initSocket, SIO_GET_EXTENSION_FUNCTION_POINTER, &GuidConnectEx, sizeof(GuidConnectEx), lpfnConnectEx, sizeof(lpfnConnectEx), NULL, NULL, NULL);
+  WSAIoctl(initSocket, SIO_GET_EXTENSION_FUNCTION_POINTER, &GuidDisconnectEx, sizeof(GuidDisconnectEx), lpfnDisConnectEx, sizeof(lpfnDisConnectEx), NULL, NULL, NULL);
+
+
+  SOCKET listenSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
+  assert(listenSocket != INVALID_SOCKET);
+
+  struct sockaddr_in serverAddr;
+  serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+  serverAddr.sin_port = htons(8080);
+  serverAddr.sin_family = AF_INET;
   
-  //TODO: 세션 관리자 (최대 개수보다 초과한 경우, 연결 유지하는 중인지 확인 등..)
-  while(1)
-  {
-    DWORD numBytes;
-    ULONG completionKey;
-    SessionContext* context;
-    DWORD timeout = INFINITE; 
-
-    int result = GetQueuedCompletionStatus(service.iocpHandle, &numBytes, (PULONG_PTR)&completionKey,(struct _OVERLAPPED**) &context, timeout);
-    assert( result == 0 );
-
-    if(GetLastError() == WAIT_TIMEOUT)
-      continue;
-    
-    // TODO: 에러 처리
-
-    // 연결 요청 처리
-    struct sockaddr_in clientAddr;
-    int addrLen = sizeof(clientAddr);
-    char clientIp[16];
-
-    getpeername(context->clientSocket, (struct sockaddr*)&clientAddr, &addrLen);
-    inet_ntop(AF_INET, &clientAddr.sin_addr, clientIp, sizeof(clientIp));
-
-    printf("클라이언트가 접속했습니다. IP: %s \n", clientIp);
-  }
-  
-
   return 0;
 }

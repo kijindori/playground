@@ -49,14 +49,6 @@
 #endif
 
 
-int InitializeServerService();
-int InitializeWinsock(WSADATA* wsaData);
-int InitializeIocp(HANDLE* iocpHandle, LPFN_ACCEPTEX acceptEx, LPFN_CONNECTEX connEx, LPFN_DISCONNECTEX disconnEx);
-int InitializeListenSocket(SOCKET* socket);
-int InitializeSession(ServerService* service);
-int AcceptConnection(ServerService* service);
-
-
 typedef struct SessionContext
 {
   OVERLAPPED overlapped;
@@ -74,3 +66,12 @@ typedef struct ServerService
     LPFN_DISCONNECTEX disconnectEx;
     SessionContext* contextCollection[NUM_MAX_SESSIONS];
 } ServerService;
+
+
+int InitializeServerService();
+int InitializeWinsock(WSADATA* wsaData);
+int InitializeIocp(HANDLE* iocpHandle, LPFN_ACCEPTEX acceptEx, LPFN_CONNECTEX connEx, LPFN_DISCONNECTEX disconnEx);
+int InitializeListenSocket(SOCKET* socket);
+int InitializeSession(ServerService* service);
+int AcceptConnection(ServerService* service);
+
