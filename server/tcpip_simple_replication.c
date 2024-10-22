@@ -90,35 +90,3 @@ int AcceptConnection(ServerService* service)
       );
   }
 }
-
-
-int main()
-{
- 
-  WSADATA w;
-  assert( WSAStartup(MAKEWORD(2, 2), &w) == 0);
-  SOCKET initSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-
-  LPFN_ACCEPTEX lpfnAcceptEx = NULL;
-  LPFN_CONNECTEX lpfnConnectEx = NULL;
-  LPFN_DISCONNECTEX lpfnDisConnectEx = NULL;
-
-  GUID GuidAcceptEx = WSAID_ACCEPTEX;
-  GUID GuidConnectEx = WSAID_CONNECTEX;
-  GUID GuidDisconnectEx = WSAID_DISCONNECTEX;
-
-  WSAIoctl(initSocket, SIO_GET_EXTENSION_FUNCTION_POINTER, &GuidAcceptEx, sizeof(GuidAcceptEx), lpfnAcceptEx, sizeof(lpfnAcceptEx), NULL, NULL, NULL);
-  WSAIoctl(initSocket, SIO_GET_EXTENSION_FUNCTION_POINTER, &GuidConnectEx, sizeof(GuidConnectEx), lpfnConnectEx, sizeof(lpfnConnectEx), NULL, NULL, NULL);
-  WSAIoctl(initSocket, SIO_GET_EXTENSION_FUNCTION_POINTER, &GuidDisconnectEx, sizeof(GuidDisconnectEx), lpfnDisConnectEx, sizeof(lpfnDisConnectEx), NULL, NULL, NULL);
-
-
-  SOCKET listenSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
-  assert(listenSocket != INVALID_SOCKET);
-
-  struct sockaddr_in serverAddr;
-  serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-  serverAddr.sin_port = htons(8080);
-  serverAddr.sin_family = AF_INET;
-  
-  return 0;
-}
